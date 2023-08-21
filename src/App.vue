@@ -14,7 +14,7 @@ import CsvUploader from './components/CsvUploader.vue'
       </a>
     </div>
     <HelloWorld msg="Vite + Vue" />
-    <CsvUploader msg="Upload" />
+    <CsvUploader/>
 </div>
 
 </template>

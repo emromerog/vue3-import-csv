@@ -6,10 +6,26 @@
   </template>
 
 <script>
+import Papa from 'papaparse';
+
 export default {
+  data() {
+    return {
+      csvContent: '',
+      jsonData: null
+    };
+  },
   methods: {
     handleFileChange(event) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
       this.selectedFile = event.target.files[0];
+
+      reader.onload = () => {
+        this.csvContent = reader.result;
+      };
+
+      reader.readAsText(file);
     },
     uploadCsv() {
       console.log("Hola");
@@ -19,15 +35,37 @@ export default {
       }
     },
     async uploadFile(file) {
-      const formData = new FormData();
-      formData.append('csvFile', file);
+      const result = Papa.parse(this.csvContent, { header: false });
+      const json = [];
+      const jsonObjects = [];
 
-      console.log("Hola");
+      for (const row of result.data) {
+        json.push({
+          name: row[0],
+          phone: row[1],
+          email: row[2]
+        });
+        const jsonObject = {
+          name: row[0],
+          phone: row[1],
+          email: row[2]
+        };
+        jsonObjects.push(jsonObject);
+      }
+      
+      this.jsonData = json;
 
+      //console.log(json);
+      console.log(jsonObjects);
+
+      for (const item of jsonObjects) {
       try {
-        const response = await fetch('URL_DEL_ENDPOINT', {
+        const response = await fetch('https://8j5baasof2.execute-api.us-west-2.amazonaws.com/production/tests/trucode/items', {
           method: 'POST',
-          body: formData
+          headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(item)
         });
 
         if (response.ok) {
@@ -38,6 +76,7 @@ export default {
       } catch (error) {
         // Manejar errores de red u otros errores
       }
+    }
     }
   }
 };
