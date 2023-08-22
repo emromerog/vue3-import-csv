@@ -12,7 +12,7 @@ export default {
   data() {
     return {
       csvContent: '',
-      jsonData: null
+      jsonObjects: []
     };
   },
   methods: {
@@ -28,36 +28,29 @@ export default {
       reader.readAsText(file);
     },
     uploadCsv() {
-      console.log("Hola");
       if (this.selectedFile) {
-        // Aquí puedes llamar a una función para enviar el archivo al endpoint
-        this.uploadFile(this.selectedFile);
+        //Llamar función para enviar el archivo al endpoint
+        this.convertToJson(this.selectedFile);
       }
     },
-    async uploadFile(file) {
+    async convertToJson(file) {
       const result = Papa.parse(this.csvContent, { header: false });
-      const json = [];
-      const jsonObjects = [];
 
       for (const row of result.data) {
-        json.push({
-          name: row[0],
-          phone: row[1],
-          email: row[2]
-        });
+        const phone = this.formatPhoneNumber(row[1]);
         const jsonObject = {
           name: row[0],
-          phone: row[1],
+          phone: phone,
           email: row[2]
         };
-        jsonObjects.push(jsonObject);
+        this.jsonObjects.push(jsonObject);
       }
-      
-      this.jsonData = json;
+      console.log("jsonObjects: " + this.jsonObjects);
 
-      //console.log(json);
-      console.log(jsonObjects);
-
+      this.uploadFile(this.jsonObjects);
+    },
+    uploadFile(jsonObjects){
+      console.log("Holafdgdf")
       for (const item of jsonObjects) {
       try {
         const response = await fetch('https://8j5baasof2.execute-api.us-west-2.amazonaws.com/production/tests/trucode/items', {
@@ -69,7 +62,7 @@ export default {
         });
 
         if (response.ok) {
-          // El archivo se subió exitosamente
+          console
         } else {
           // Hubo un error al subir el archivo
         }
@@ -77,6 +70,19 @@ export default {
         // Manejar errores de red u otros errores
       }
     }
+    },
+    formatPhoneNumber(phone) {
+      console.log(phone)
+      // Verificar si el número tiene 9 caracteres
+      if (phone.length === 9) {
+        phone = phone + '0'; // Agregar un cero al final
+        return phone.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3'); // Aplicar formato
+      }
+      // Verificar si el número tiene 10 caracteres
+      if (phone.length === 10) {
+        return phone.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3'); // Aplicar formato
+      }
+      return phone; // Devolver sin cambios si no cumple con las condiciones
     }
   }
 };
