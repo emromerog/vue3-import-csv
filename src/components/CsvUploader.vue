@@ -12,7 +12,7 @@ export default {
   data() {
     return {
       csvContent: '',
-      jsonObjects: []
+      jsonData: null
     };
   },
   methods: {
@@ -29,30 +29,39 @@ export default {
     },
     uploadCsv() {
       if (this.selectedFile) {
-        //Llamar función para enviar el archivo al endpoint
-        this.convertToJson(this.selectedFile);
+        //Llamar a una función para enviar el archivo al endpoint
+        this.uploadFile(this.selectedFile);
       }
     },
-    async convertToJson(file) {
+    async uploadFile(file) {
       const result = Papa.parse(this.csvContent, { header: false });
+      const json = [];
+      const jsonObjects = [];
 
       for (const row of result.data) {
+        json.push({
+          name: row[0],
+          phone: row[1],
+          email: row[2]
+        });
+        console.log("json: " + json);
         const phone = this.formatPhoneNumber(row[1]);
         const jsonObject = {
           name: row[0],
           phone: phone,
           email: row[2]
         };
-        this.jsonObjects.push(jsonObject);
+        jsonObjects.push(jsonObject);
       }
-      console.log("jsonObjects: " + this.jsonObjects);
+      
+      this.jsonData = json;
 
-      this.uploadFile(this.jsonObjects);
-    },
-    uploadFile(jsonObjects){
-      console.log("Holafdgdf")
+      //console.log(json);
+      console.log(jsonObjects);
+
       for (const item of jsonObjects) {
-      try {
+        console.log(item);
+      /*try {
         const response = await fetch('https://8j5baasof2.execute-api.us-west-2.amazonaws.com/production/tests/trucode/items', {
           method: 'POST',
           headers: {
@@ -62,13 +71,13 @@ export default {
         });
 
         if (response.ok) {
-          console
+          // El archivo se subió exitosamente
         } else {
           // Hubo un error al subir el archivo
         }
       } catch (error) {
         // Manejar errores de red u otros errores
-      }
+      }*/
     }
     },
     formatPhoneNumber(phone) {
