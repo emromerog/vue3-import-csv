@@ -3,6 +3,27 @@
       <input type="file" @change="handleFileChange" />
       <button @click="uploadCsv">Subir CSV</button>
     </div>
+
+    <div>
+    <table v-if="showTable" class="border-collapse border border-green-800">
+      <thead>
+        <tr>
+          <th class="border border-green-600 px-4 py-2">Nombre</th>
+          <th class="border border-green-600 px-4 py-2">Teléfono</th>
+          <th class="border border-green-600 px-4 py-2">Correo electrónico</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(item, index) in jsonData" :key="index">
+          <td class="border border-green-600 px-4 py-2">{{ item.name }}</td>
+          <td class="border border-green-600 px-4 py-2">{{ item.phone }}</td>
+          <td class="border border-green-600 px-4 py-2">{{ item.email }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+
   </template>
 
 <script>
@@ -12,7 +33,8 @@ export default {
   data() {
     return {
       csvContent: '',
-      jsonData: null
+      jsonData: null,
+      showTable: false,
     };
   },
   methods: {
@@ -35,16 +57,16 @@ export default {
     },
     async uploadFile(file) {
       const result = Papa.parse(this.csvContent, { header: false });
-      const json = [];
+      //const json = [];
       const jsonObjects = [];
 
       for (const row of result.data) {
-        json.push({
+        /*json.push({
           name: row[0],
           phone: row[1],
           email: row[2]
-        });
-        console.log("json: " + json);
+        });*/
+        //console.log("json: " + json);
         const phone = this.formatPhoneNumber(row[1]);
         const jsonObject = {
           name: row[0],
@@ -54,14 +76,14 @@ export default {
         jsonObjects.push(jsonObject);
       }
       
-      this.jsonData = json;
+      //this.jsonData = json;
 
       //console.log(json);
-      console.log(jsonObjects);
+      //console.log(jsonObjects);
 
       for (const item of jsonObjects) {
         console.log(item);
-      /*try {
+      try {
         const response = await fetch('https://8j5baasof2.execute-api.us-west-2.amazonaws.com/production/tests/trucode/items', {
           method: 'POST',
           headers: {
@@ -77,8 +99,10 @@ export default {
         }
       } catch (error) {
         // Manejar errores de red u otros errores
-      }*/
+      }
     }
+    await this.getData();
+    //this.jsonData = jsonObjects;
     },
     formatPhoneNumber(phone) {
       console.log(phone)
@@ -92,6 +116,18 @@ export default {
         return phone.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3'); // Aplicar formato
       }
       return phone; // Devolver sin cambios si no cumple con las condiciones
+    },
+    async getData() {
+      const response = await fetch('https://8j5baasof2.execute-api.us-west-2.amazonaws.com/production/tests/trucode/items');
+      console.log("DATA: " + response) ;
+      this.jsonData = response;
+      if (response.ok) {
+          //Los datos se obtuviero exitosamente
+          this.showTable = true;
+        } else {
+          console.log("Pailas") ;
+        }
+      //return this.jsonData;
     }
   }
 };

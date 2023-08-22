@@ -7,7 +7,7 @@ import Csv from '../components/CsvUploader.vue';
 const routes: RouteRecordRaw[] = [
     {
         path: '/',
-        name: 'Homeffv',
+        name: 'Home',
         component: Home
     },
     {
