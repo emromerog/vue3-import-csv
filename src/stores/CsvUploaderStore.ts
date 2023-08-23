@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import Papa from 'papaparse';
+
 const POSTurl = 'https://8j5baasof2.execute-api.us-west-2.amazonaws.com/production/tests/trucode/items';
 const GETurl = 'https://8j5baasof2.execute-api.us-west-2.amazonaws.com/production/tests/trucode/items';
 
@@ -11,15 +12,8 @@ export const useCsvStore = defineStore('csvStore', {
     selectedFile: null,
   }),
   actions: {
-    /*async initializeData() {
-      console.log("initializeData...");
-      this.jsonData = await this.getData();
-      console.log("initializeData count: " + this.jsonData.count);
-      console.log("initializeData items: " + this.jsonData.items);
-      if (this.jsonData.count > 0) {
-        this.showTable = true;
-      }
-    },*/
+    
+    /*** Maneja el evento change del input file*/
     handleFileChange(event) {
         console.log("handleFileChange...");
         const file = event;
@@ -32,14 +26,24 @@ export const useCsvStore = defineStore('csvStore', {
   
         reader.readAsText(file);
       },
+
+      /** Valida que el archivo CSV se cargue correctamente */
       uploadCsv() {
         console.log("uploadCsv...");
         if (this.selectedFile) {
+
+          const extension = this.selectedFile.name.split('.').pop().toLowerCase();
+          if (extension === 'csv') {
             console.log("Archivo seleccionado");
             this.uploadFile(this.selectedFile);
+          } else {
+            // El archivo no es un CSV
+            alert('Por favor, seleccione un archivo CSV.');
+          }
         }
       },
 
+      /** Sube el archivo CSV a la API */
       async uploadFile(file) {
         console.log("uploadFile...");
         const result = Papa.parse(this.csvContent, { header: false });
@@ -55,18 +59,16 @@ export const useCsvStore = defineStore('csvStore', {
           jsonObjects.push(jsonObject);
         }
 
-        console.log(jsonObjects);
         let counter = 0;
         for (const item of jsonObjects) {
-          //console.log(item);
-        try {
-          const response = await fetch(POSTurl, {
+          try {
+            const response = await fetch(POSTurl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
               },
               body: JSON.stringify(item)
-          });
+            });
 
           counter = counter + 1;
 
@@ -82,10 +84,10 @@ export const useCsvStore = defineStore('csvStore', {
         }
       }
       this.jsonData = await this.getData();
-      console.log("uploadFile jsonData: " + this.jsonData.count);
       this.showTable = true;
-      console.log("uploadFile showTable: " + this.showTable);
       },
+
+      /** Formatea el número de teléfono */
       formatPhoneNumber(phone) {
         // Verificar si el número tiene 9 caracteres
         if (phone.length === 9) {
@@ -98,12 +100,13 @@ export const useCsvStore = defineStore('csvStore', {
         }
         return phone; // Devolver sin cambios si no cumple con las condiciones
       },
+
+      /** Obtiene la data de la API para mostrarla en la tabla */
       async getData() {
         try {
         const response = await fetch(GETurl);
         if (response.ok) {
           console.log('Data obtenida correctamente.');
-          //this.showTable = true;
           this.jsonData = await response.json(); // Actualiza directamente la propiedad reactiva
           this.showTable = true; // Actualiza directamente la propiedad reactiva
           return this.jsonData;
