@@ -11,7 +11,7 @@ export const useCsvStore = defineStore('csvStore', {
     selectedFile: null,
   }),
   actions: {
-    async initializeData() {
+    /*async initializeData() {
       console.log("initializeData...");
       this.jsonData = await this.getData();
       console.log("initializeData count: " + this.jsonData.count);
@@ -19,7 +19,7 @@ export const useCsvStore = defineStore('csvStore', {
       if (this.jsonData.count > 0) {
         this.showTable = true;
       }
-    },
+    },*/
     handleFileChange(event) {
         console.log("handleFileChange...");
         const file = event;
@@ -104,7 +104,9 @@ export const useCsvStore = defineStore('csvStore', {
         if (response.ok) {
           console.log('Data obtenida correctamente.');
           //this.showTable = true;
-          return await response.json();
+          this.jsonData = await response.json(); // Actualiza directamente la propiedad reactiva
+          this.showTable = true; // Actualiza directamente la propiedad reactiva
+          return this.jsonData;
           } else {
             console.error('Error en la solicitud:', response.status, response.statusText);
           }
@@ -112,10 +114,5 @@ export const useCsvStore = defineStore('csvStore', {
           console.error('Se produjo un error al obtener la data: ', error.message);
         }
       }
-  },
-  getters: {
-    getJsonDataItems() {
-      return this.jsonData;
-    }
   }
 });

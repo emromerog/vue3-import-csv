@@ -14,7 +14,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr class="bg-white border-b transition duration-300 ease-in-out hover:bg-gray-100" v-if="jsonData && jsonData.items" v-for="(item, index) in jsonData.items" :key="index">
+              <tr class="bg-white border-b transition duration-300 ease-in-out hover:bg-gray-100" v-for="(item, index) in jsonData.items" :key="index">
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ index + 1 }}</td>
                 <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">{{ item.name }}</td>
                 <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">{{ item.phone }}</td>
@@ -30,22 +30,8 @@
   </template>
   
   <script setup>
-  import { onBeforeMount } from 'vue';
   import { useCsvStore } from '../stores/CsvUploaderStore.ts';
   
   const store = useCsvStore();
-
-  const initializeCsvData = async () => {
-    await store.initializeData();
-    const showTable = store.showTable;
-  console.log('showTable csvTable: ', showTable);
-  const jsonData = store.jsonData;
-  console.log('jsonData csvTable: ', jsonData.items);
-  };
-
-onBeforeMount(async () => {
-  // Llamar automáticamente a initializeData cuando el componente está a punto de montarse
-  await initializeCsvData();
-});
 
   </script>
