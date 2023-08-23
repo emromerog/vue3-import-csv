@@ -1,10 +1,10 @@
 <template>
     <div>
       <input type="file" @change="handleFileChange" />
-      <button @click="uploadCsv">Subir CSV</button>
+      <button class="bg-blue-500" @click="uploadCsv">Subir CSV</button>
     </div>
 
-    <div>
+    <!--<div>
     <table v-if="showTable" class="border-collapse border border-green-800">
       <thead>
         <tr>
@@ -14,16 +14,46 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(item, index) in jsonData" :key="index">
+        <tr v-for="(item, index) in jsonData.items" :key="index">
           <td class="border border-green-600 px-4 py-2">{{ item.name }}</td>
           <td class="border border-green-600 px-4 py-2">{{ item.phone }}</td>
           <td class="border border-green-600 px-4 py-2">{{ item.email }}</td>
         </tr>
       </tbody>
     </table>
+    <p v-else>No hay datos para mostrar.</p>
+  </div>-->
+  
+  
+  <!-- component -->
+<div class="flex flex-col">
+  <div class="overflow-x-auto sm:mx-0.5 lg:mx-0.5">
+    <div class="py-2 inline-block min-w-full sm:px-6 lg:px-8">
+      <div class="overflow-hidden">
+        <table v-if="showTable" class="min-w-full">
+          <thead class="bg-gray-200 border-b">
+            <tr>
+              <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4 text-left">#</th>
+              <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4 text-left">Nombre</th>
+              <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4 text-left">Teléfono</th>
+              <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4 text-left">Correo electrónico</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="bg-white border-b transition duration-300 ease-in-out hover:bg-gray-100" v-for="(item, index) in jsonData.items" :key="index">
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ index + 1 }}</td>
+              <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">{{ item.name }}</td>
+              <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">{{ item.phone }}</td>
+              <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">{{ item.email }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <p v-else>No hay datos para mostrar.</p>
+      </div>
+    </div>
   </div>
-
-
+</div>
+  
   </template>
 
 <script>
@@ -33,12 +63,22 @@ export default {
   data() {
     return {
       csvContent: '',
-      jsonData: null,
+      jsonData: [],
       showTable: false,
     };
   },
+  async mounted() {
+      //console.log('Component mounted.');
+      //const existData = await this.getData();
+      this.jsonData = await this.getData();
+      console.log(this.jsonData);
+      if (this.jsonData.count > 0){
+        this.showTable = true;
+      }
+    },
   methods: {
     handleFileChange(event) {
+      console.log('handleFileChange.');
       const file = event.target.files[0];
       const reader = new FileReader();
       this.selectedFile = event.target.files[0];
@@ -57,16 +97,9 @@ export default {
     },
     async uploadFile(file) {
       const result = Papa.parse(this.csvContent, { header: false });
-      //const json = [];
       const jsonObjects = [];
 
       for (const row of result.data) {
-        /*json.push({
-          name: row[0],
-          phone: row[1],
-          email: row[2]
-        });*/
-        //console.log("json: " + json);
         const phone = this.formatPhoneNumber(row[1]);
         const jsonObject = {
           name: row[0],
@@ -76,13 +109,8 @@ export default {
         jsonObjects.push(jsonObject);
       }
       
-      //this.jsonData = json;
-
-      //console.log(json);
-      //console.log(jsonObjects);
-
       for (const item of jsonObjects) {
-        console.log(item);
+        //console.log(item);
       try {
         const response = await fetch('https://8j5baasof2.execute-api.us-west-2.amazonaws.com/production/tests/trucode/items', {
           method: 'POST',
@@ -101,8 +129,8 @@ export default {
         // Manejar errores de red u otros errores
       }
     }
-    await this.getData();
-    //this.jsonData = jsonObjects;
+    this.jsonData = await this.getData();
+    this.showTable = true;
     },
     formatPhoneNumber(phone) {
       console.log(phone)
@@ -118,16 +146,20 @@ export default {
       return phone; // Devolver sin cambios si no cumple con las condiciones
     },
     async getData() {
+      try {
       const response = await fetch('https://8j5baasof2.execute-api.us-west-2.amazonaws.com/production/tests/trucode/items');
       console.log("DATA: " + response) ;
-      this.jsonData = response;
       if (response.ok) {
-          //Los datos se obtuviero exitosamente
-          this.showTable = true;
+        return await response.json();
+        //this.showTable = true;
+        console.log(this.jsonData);
         } else {
-          console.log("Pailas") ;
+          console.error('Error en la solicitud:', response.status, response.statusText);
         }
-      //return this.jsonData;
+      } catch (error) {
+        console.error('Se produjo un error:', error.message);
+        console.error('Traza de pila:', error.stack);
+      }
     }
   }
 };
