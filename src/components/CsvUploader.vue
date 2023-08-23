@@ -68,10 +68,7 @@ export default {
     };
   },
   async mounted() {
-      //console.log('Component mounted.');
-      //const existData = await this.getData();
       this.jsonData = await this.getData();
-      console.log(this.jsonData);
       if (this.jsonData.count > 0){
         this.showTable = true;
       }
@@ -91,7 +88,6 @@ export default {
     },
     uploadCsv() {
       if (this.selectedFile) {
-        //Llamar a una función para enviar el archivo al endpoint
         this.uploadFile(this.selectedFile);
       }
     },
@@ -148,17 +144,16 @@ export default {
     async getData() {
       try {
       const response = await fetch('https://8j5baasof2.execute-api.us-west-2.amazonaws.com/production/tests/trucode/items');
-      console.log("DATA: " + response) ;
       if (response.ok) {
-        return await response.json();
+        console.log('Data obtenida correctamente');
         //this.showTable = true;
+        return await response.json();
         console.log(this.jsonData);
         } else {
           console.error('Error en la solicitud:', response.status, response.statusText);
         }
       } catch (error) {
-        console.error('Se produjo un error:', error.message);
-        console.error('Traza de pila:', error.stack);
+        console.error('Se produjo un error: ', error.message);
       }
     }
   }
