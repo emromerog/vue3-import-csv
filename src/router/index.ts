@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 
 import Home from '../components/HelloWorld.vue';
-import Csv from '../components/CsvUploader.vue';
-//import CsvUploader from '../views/CsvUploaderView.vue';
+//import Csv from '../components/CsvUploader.vue';
+import Csv from '../views/CsvUploaderView.vue';
 
 const routes: RouteRecordRaw[] = [
     {
