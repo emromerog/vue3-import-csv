@@ -37,7 +37,7 @@
   
   </template>
 
-<script setup>
+<script>
 import Papa from 'papaparse';
 
 export default {

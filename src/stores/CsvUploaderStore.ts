@@ -29,11 +29,18 @@ export const useCsvStore = defineStore('csvStore', {
         reader.readAsText(file);
       },
 
-      /** Valida que el archivo CSV se cargue correctamente */
+      /** Valida que el archivo se cargue */
       uploadCsv() {
         console.log("uploadCsv...");
         if (this.selectedFile) {
+          this.uploadFile(this.selectedFile);
+        }else {
+          // El archivo no se ha subido
+          alert('Por favor, seleccione el archivo csv.');
+        }
 
+        /*if (this.selectedFile) {
+          //console.log("Archivo seleccionado");
           const extension = this.selectedFile.name.split('.').pop().toLowerCase();
           if (extension === 'csv') {
             console.log("Archivo seleccionado");
@@ -42,7 +49,7 @@ export const useCsvStore = defineStore('csvStore', {
             // El archivo no es un CSV
             alert('Por favor, seleccione un archivo CSV.');
           }
-        }
+        }*/
       },
 
       /** Sube el archivo CSV a la API */
@@ -77,6 +84,7 @@ export const useCsvStore = defineStore('csvStore', {
           if (response.ok) {
             // El item se subió exitosamente
             console.log('Item ' + counter + ' cargado exitosamente.');
+            await new Promise(resolve => setTimeout(resolve, 500));
           } else {
             // Hubo un error al subir el item
             console.log('Error el cargar el Item ' + counter + '.');
@@ -85,22 +93,28 @@ export const useCsvStore = defineStore('csvStore', {
           // Manejar errores de red u otros errores
         }
       }
-      this.jsonData = await this.getData();
-      this.showTable = true;
+      //this.jsonData = await this.getData();
+      //this.showTable = true;
       },
 
       /** Formatea el número de teléfono */
       formatPhoneNumber(phone) {
+        const regex = /(\d{3})(\d{3})(\d{4})/; // Expresión regular para eliminar caracteres no numéricos
+        //Verificar si el número tiene 9 caracteres
+        if (phone.length === 8) {
+          phone = phone + '00'; // Agregar un cero al final
+          return phone.replace(regex, '$1-$2-$3'); // Aplicar formato
+        }
         //Verificar si el número tiene 9 caracteres
         if (phone.length === 9) {
           phone = phone + '0'; // Agregar un cero al final
-          return phone.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3'); // Aplicar formato
+          return phone.replace(regex, '$1-$2-$3'); // Aplicar formato
         }
         //Verificar si el número tiene 10 caracteres
         if (phone.length === 10) {
-          return phone.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3'); // Aplicar formato
+          return phone.replace(regex, '$1-$2-$3'); // Aplicar formato
         }
-        return phone; // Devolver sin cambios si no cumple con las condiciones
+        return phone; //Devolver sin cambios si no cumple con las condiciones
       },
 
       /** Obtiene la data de la API para mostrarla en la tabla */
