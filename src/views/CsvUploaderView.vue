@@ -1,11 +1,10 @@
 <template>
+    <!-- Input file -->
     <div>
       <input type="file" @change="handleFileChange($event.target.files[0])" />
       <button class="bg-blue-500" @click="uploadCsv">Subir CSV</button>
   
-    <!-- Renderizar la tabla aquí
-    <CsvTable />-->
-
+    <!-- Tabla -->
     <div class="flex flex-col">
     <div class="overflow-x-auto sm:mx-0.5 lg:mx-0.5">
       <div class="py-2 inline-block min-w-full sm:px-6 lg:px-8">
@@ -42,7 +41,6 @@
   <script setup>
   import { ref, onMounted } from 'vue';
   import { useCsvStore } from '../stores/CsvUploaderStore.ts';
-  import CsvTable from '../views/CsvTableView.vue';
   
   const store = useCsvStore();
 

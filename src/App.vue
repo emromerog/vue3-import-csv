@@ -15,12 +15,15 @@
 
     <h1 class="welcome-title">Bienvenido</h1>
 
+  <!-- Pestañas de navegación -->
   <div class="flex justify-center items-center space-x-4">
     <router-link to="/">HOME</router-link>
     <router-link to="/csv">UPLOAD-CSV</router-link>
   </div>
     <!--<HelloWorld msg="Vite + Vue" />-->
 </div>
+
+<!-- Vista según la pestaña de navegación -->
 <router-view />
 </template>
 

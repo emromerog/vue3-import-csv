@@ -20,10 +20,12 @@ export const useCsvStore = defineStore('csvStore', {
         const reader = new FileReader();
         this.selectedFile = file;
   
+        //Evento de carga para el reader
         reader.onload = () => {
           this.csvContent = reader.result;
         };
   
+        //Se procesa el archivo como texto
         reader.readAsText(file);
       },
 
@@ -89,12 +91,12 @@ export const useCsvStore = defineStore('csvStore', {
 
       /** Formatea el número de teléfono */
       formatPhoneNumber(phone) {
-        // Verificar si el número tiene 9 caracteres
+        //Verificar si el número tiene 9 caracteres
         if (phone.length === 9) {
           phone = phone + '0'; // Agregar un cero al final
           return phone.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3'); // Aplicar formato
         }
-        // Verificar si el número tiene 10 caracteres
+        //Verificar si el número tiene 10 caracteres
         if (phone.length === 10) {
           return phone.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3'); // Aplicar formato
         }
