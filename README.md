@@ -1,4 +1,17 @@
-# Vue 3 + TypeScript + Vite
+# Execute project
+1. Clone repository
+2. npm install
+3. npm run dev
+4. Please upload the csv file in the option "UPLOAD-CSV"
+5. You can check the console of the browser  the loading of the file
+6. Reloads the page to display a table with the loaded data
+
+# Comments project
+This project contains a "CsvUploader.vue" in the components folder. This is an example with the implementation in the same file. This is for comparison purposes with the store.
+
+the final files are the ones set in stores and views ("CsvUploaderStore.ts" and "CsvUploaderView.vue").
+
+# Vue 3 + TypeScript + Vite + Vue Router 3 + Pinia
 
 This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
 
